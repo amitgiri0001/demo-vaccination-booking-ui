@@ -1,25 +1,48 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { FC, ReactElement } from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { Helmet } from 'react-helmet';
+
+// app routes
+import { routes } from "./config";
+
+// constants
+import { APP_TITLE } from "./utils/constants";
+
+// interfaces
+import RouteItem from './model/RouteItem.model';
+
+
+// define app context
+const AppContext = React.createContext(null);
+
+// default component
+const DefaultComponent: FC<{}> = (): ReactElement => (
+  <div>{`No Component Defined.`}</div>
+);
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <>
+       <Helmet>
+        <title>{APP_TITLE}</title>
+      </Helmet>
+      <AppContext.Provider value={null}>
+        <Router>
+          <Switch>
+            {
+              routes.map((route: RouteItem) => (
+                <Route
+                      key={`${route.key}`}
+                      path={`${route.path}`}
+                      component={route.component || DefaultComponent}
+                      exact
+                />
+              ))
+            }
+          </Switch>
+        </Router>
+      </AppContext.Provider>
+      </>
   );
 }
 
