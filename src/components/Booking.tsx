@@ -1,13 +1,8 @@
-import React from 'react';
-import { styled } from '@material-ui/core/styles';
-import { compose, spacing, palette } from '@material-ui/system';
+import { Box } from '@material-ui/core';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import BookingDetails from '../pages/BookingDetails';
 import { Button } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-
-const Box = styled('div')(compose(spacing, palette));
 
 export default function JSS() {
   const history = useHistory();
@@ -28,7 +23,7 @@ export default function JSS() {
       bookingDate: bookingDetails.bookingDate,
       bookingTime: bookingDetails.slotTime,
     })
-  })
+  }, [])
 
   return (
     <>
