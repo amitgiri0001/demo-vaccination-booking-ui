@@ -1,6 +1,9 @@
 # Vaccination-booking-ui
 The most minimal UI to showcase the functionality of vaccination APIs
 
+# Demo
+[Demo](/demo/Vaccination%20UI%20demo%20-%20720.mov)
+
 ## Available Scripts
 
 In the project directory, you can run:
