@@ -4,6 +4,7 @@ import { makeStyles, createStyles } from "@material-ui/core/styles";
 
 import { APP_TITLE, PAGE_TITLE_HOME } from "../utils/constants";
 import IdentityForm from "../components/IdentityForm";
+import { Container } from "@material-ui/core";
 
 const useStyles = makeStyles(() =>
   createStyles({
@@ -12,6 +13,8 @@ const useStyles = makeStyles(() =>
       display: "flex",
       flexDirection: "row",
       justifyContent: "space-between",
+      textAlign: "center",
+      margin: "20px",
     },
   })
 );
@@ -26,7 +29,9 @@ const Home: FC<{}> = (): ReactElement => {
         </title>
       </Helmet>
       <div className={classes.root}>
-        <IdentityForm></IdentityForm>
+        <Container component="main" maxWidth="xs">
+          <IdentityForm></IdentityForm>
+        </Container>
       </div>
     </>
   );
