@@ -33,6 +33,19 @@ export default function JSS() {
       });
     } 
   }, []);
+
+  const cancelAndRedirect = () => {
+    const bookingDetails = JSON.parse(localStorage.getItem('bookingDetails') ?? '');
+    axios.delete(`${API_BASE_PATH}/bookings/${bookingDetails.id}`)
+      .then(() => {
+        console.log(`Booking deleted successfully.`);
+        localStorage.removeItem('selectedCentre');
+        localStorage.removeItem('bookingDetails');
+        history.push('/centres')
+      }, (error) => {
+        console.log(error);
+      });
+  }
   
 
   return (
@@ -45,10 +58,24 @@ export default function JSS() {
       </Box>
       <Box m="2rem" />
       <div style={{
-        position: 'absolute',
-        right: 30,
+         textAlign: 'center',
+         margin: '10px',
+         position: 'absolute',
+         left: 0
         }}>
-          <Button variant="contained" color="primary" onClick={() => { 
+          <Button variant="contained" color="secondary" onClick={() => { 
+              cancelAndRedirect();
+            }} >
+          Cancel and book again
+          </Button>
+      </div>
+      <div style={{
+          textAlign: 'center',
+          margin: '10px',
+          position: 'absolute',
+          right: 0
+        }}>
+          <Button variant="contained" color="default" onClick={() => { 
             localStorage.clear();
             history.push('/')
             }} >

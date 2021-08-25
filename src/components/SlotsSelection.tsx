@@ -70,7 +70,8 @@ export default function SlotsSelection() {
       console.log(data);
       localStorage.setItem('bookingDetails', JSON.stringify({
         ...bookingDetails,
-        slotTime: selectedSlot.startAt
+        slotTime: selectedSlot.startAt,
+        ...data
       }))
       history.push('/booking')
     }, (error) => {
