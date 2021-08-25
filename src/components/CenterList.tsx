@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { createStyles, Theme, makeStyles } from '@material-ui/core/styles';
-import { Button } from "@material-ui/core";
+import { Button, Fab } from "@material-ui/core";
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
@@ -11,6 +11,7 @@ import { useHistory } from 'react-router-dom';
 import HomeWorkIcon from '@material-ui/icons/HomeWork';
 import axios from 'axios';
 import { useState } from 'react';
+import { API_BASE_PATH } from '../utils/constants';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -21,6 +22,18 @@ const useStyles = makeStyles((theme: Theme) =>
     inline: {
       display: 'inline',
     },
+    floatingIcon: {
+      position: 'fixed',
+      bottom: 0,
+      zIndex: 999,
+      right: 0,
+      marginRight: '20px',
+      marginBottom: '20px',
+    },
+    floatingIconButtonDiv: {
+      paddingLeft: '50px',
+      paddingRight: '50px'
+    }
   }),
 );
 
@@ -35,7 +48,7 @@ function CenterList() {
 
   // Similar to componentDidMount and componentDidUpdate:
   useEffect(() => {
-    axios.get(`https://vacc-api.herokuapp.com/centres`)
+    axios.get(`${API_BASE_PATH}/centres`)
       .then(({ data }) => {
         console.log(data);
         setCenterList(data);
@@ -49,13 +62,15 @@ function CenterList() {
   }
 
   const handleSubmit = () => {
-    if (selectedCenter) {
+    if (selectedCenter.id) {
       localStorage.setItem('selectedCentre', JSON.stringify(selectedCenter));
       history.push('/slots')
     }
   }
 
   return (
+    <>
+    <div>
     <List className={classes.root}>
       {
         centerList.map((center: any) => (
@@ -89,10 +104,15 @@ function CenterList() {
         ))
       }
 
-      <Button variant="contained" color="primary" onClick={() => handleSubmit()} >
-        Submit
-      </Button>
     </List>
+    </div>
+     
+     <div className={classes.floatingIcon}>
+        <Fab variant="extended" className={classes.floatingIconButtonDiv} color="primary" aria-label="add" onClick={() => handleSubmit()} >
+          Next 
+        </Fab>
+     </div>
+    </>
   );
 }
 

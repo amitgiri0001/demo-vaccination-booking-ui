@@ -2,6 +2,8 @@
 export const APP_TITLE = "Vaccination drive - SG"
 export const FOOTER_TEXT = `${new Date().getFullYear()} Built with ♡ by community`
 
+export const API_BASE_PATH = process.env.NODE_ENV === 'development' ? `http://[::1]:5000` : 'https://vacc-api.herokuapp.com'
+
 // PAGES TITLE
 export const PAGE_TITLE_HOME = "Home"
 export const PAGE_TITLE_SETTINGS = "Slots"

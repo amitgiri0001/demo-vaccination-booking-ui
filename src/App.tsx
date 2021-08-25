@@ -58,7 +58,7 @@ function App() {
               <HomeWorkIcon />
             </IconButton>
             <Typography variant="h6" className={classes.title}>
-              Vaccination Booking
+              Vaccination Appointment
             </Typography>
           </Toolbar>
         </AppBar>

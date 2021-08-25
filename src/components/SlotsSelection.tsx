@@ -6,8 +6,10 @@ import moment from 'moment';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios';
 import { useState } from 'react';
-import { Box, Button } from '@material-ui/core';
+import { Box, Button, FormControl, FormHelperText, Snackbar } from '@material-ui/core';
 import { useEffect } from 'react';
+import { API_BASE_PATH } from '../utils/constants';
+import { Alert } from '@material-ui/lab';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -29,10 +31,12 @@ export default function SlotsSelection() {
   const [slotSelectedDate, setSlotSelectedDate] = useState(moment().format('YYYY-MM-DD'));
   const [slotsList, setSlotsList] = useState([]);
   const [selectedSlot, setSelectedSlot] = useState({ id: null, startAt: ''});
+  const [errorMessage, setError] = useState('');
+  const [showError, setShowError] = useState(false);
 
   const getSlots = () => {
     const selectedCentre = JSON.parse(localStorage.getItem('selectedCentre') ?? '');
-    axios.get(`https://vacc-api.herokuapp.com/centres/${selectedCentre?.id}/slots?date=${slotSelectedDate}`)
+    axios.get(`${API_BASE_PATH}/centres/${selectedCentre?.id}/slots?date=${slotSelectedDate}`)
     .then(({data}) => {
       console.log(data);
       setSlotsList(data);
@@ -40,6 +44,13 @@ export default function SlotsSelection() {
       console.log(error);
     });
   }
+
+  const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setShowError(false);
+  };
 
   const bookSlot = () => {
     const selectedCentre = JSON.parse(localStorage.getItem('selectedCentre') ?? '');
@@ -52,7 +63,7 @@ export default function SlotsSelection() {
       bookingDate: slotSelectedDate
     }
 
-    axios.post(`https://vacc-api.herokuapp.com/bookings`, {
+    axios.post(`${API_BASE_PATH}/bookings`, {
       ...bookingDetails
     })
     .then(({data}) => {
@@ -63,6 +74,14 @@ export default function SlotsSelection() {
       }))
       history.push('/booking')
     }, (error) => {
+      const errorCode = error?.response?.data?.error?.code;
+      if(errorCode === 'ALREADY_BOOKED') {
+        setError('Booking already exist.');
+      } 
+      else if(errorCode === 'SLOT_FULL') {
+        setError('Unfortunately, the slot has been taken. Please try again.')
+      }
+      setShowError(true);
       console.log(error);
     });
   }
@@ -71,34 +90,39 @@ export default function SlotsSelection() {
     <div>
       <div>
         <form className={classes.container} noValidate>
-          <TextField
-            id="date"
-            label="Slot Date"
-            type="date"
-            defaultValue={moment().format('YYYY-MM-DD')}
-            className={classes.textField}
-            InputLabelProps={{
-              shrink: true,
-            }}
-            onChange={(e) => setSlotSelectedDate(e.target.value)}
-          />
-          <Button variant="contained" color="primary" onClick={() => getSlots()} >
-              Submit
-          </Button>
+          <FormControl>
+            <TextField
+              id="date"
+              label="Select a date for the slot"
+              type="date"
+              defaultValue={moment().format('YYYY-MM-DD')}
+              className={classes.textField}
+              inputProps={{
+                min: moment().add(1, 'd').format('YYYY-MM-DD'),
+                max: moment().add(32, 'd').format('YYYY-MM-DD')
+              }}
+              onChange={(e) => setSlotSelectedDate(e.target.value)}
+            />
+          </FormControl>
+            <Button variant="contained" color="primary" onClick={() => getSlots()} >
+                Submit
+            </Button>
         </form>
       </div>
       <Box m="2rem" />
       <div style={{ width: '100%' }}>
-            {
-              slotsList.map((slot: any) => (
-                    <Chip
-                    label={slot.startAt.slice(0, 5)}
-                    clickable
-                    color={slot.isBooked ? 'secondary' : selectedSlot.id === slot.id ? 'primary' : 'default' }
-                    onClick={() => { if(!slot.isBooked) setSelectedSlot(slot) }}
-                    />
-              ))
-            }
+        {
+          slotsList.map((slot: any) => (
+                <Chip
+                label={slot.startAt.slice(0, 5)}
+                key={slot.id}
+                clickable
+                style={{margin: '5px', border: '1px'}}
+                color={slot.isBooked ? 'secondary' : selectedSlot.id === slot.id ? 'primary' : 'default' }
+                onClick={() => { if(!slot.isBooked) setSelectedSlot(slot) }}
+                />
+          ))
+        }
       </div>
       <Box m="2rem" />
       <div style={{
@@ -111,6 +135,11 @@ export default function SlotsSelection() {
               Book
         </Button>
       </div>
+      <Snackbar open={showError} autoHideDuration={6000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="error">
+          {errorMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

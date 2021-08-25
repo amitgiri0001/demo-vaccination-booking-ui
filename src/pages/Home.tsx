@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 import { makeStyles, createStyles } from "@material-ui/core/styles";
 
 import { APP_TITLE, PAGE_TITLE_HOME } from "../utils/constants";
-import IdentityForm from "../components/IdentityForm";
+import { IdentityForm} from "../components/IdentityForm";
 import { Container } from "@material-ui/core";
 
 const useStyles = makeStyles(() =>
